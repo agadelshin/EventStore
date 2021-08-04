@@ -4,10 +4,10 @@
 		<TargetFramework>net5.0</TargetFramework>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<Platforms>x64</Platforms>
+		<Platforms>x64;ARM64</Platforms>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="GitHubActionsTestLogger" Version="1.2.0"/>
+		<PackageReference Include="GitHubActionsTestLogger" Version="1.2.0" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.1" />
 		<PackageReference Include="System.Linq.Async" Version="5.0.0" />
 		<PackageReference Include="xunit" Version="2.4.1" />
