@@ -261,7 +261,8 @@ namespace EventStore.Core {
 			foreach (var (fileName, cert) in CertificateLoader.LoadAllCertificates(options.Certificate
 				.TrustedRootCertificatesPath)) {
 				trustedRootCerts.Add(cert);
-				Log.Information("Trusted root certificate file loaded: {file}", fileName);
+				var isIntermediate = cert.IssuerName.Name != cert.SubjectName.Name;
+				Log.Information("{type} certificate file loaded: {file}", isIntermediate ? "Intermediate" : "Trusted root", fileName);
 			}
 
 			if (trustedRootCerts.Count == 0)
