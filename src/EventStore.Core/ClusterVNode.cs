@@ -1434,8 +1434,13 @@ namespace EventStore.Core {
 
 			var trustedRootCerts = trustedRootCertsSelector();
 			if (trustedRootCerts != null) {
-				foreach (var cert in trustedRootCerts)
-					newChain.ChainPolicy.CustomTrustStore.Add(cert);
+				foreach (var cert in trustedRootCerts) {
+					if (cert.IssuerName.Name == cert.SubjectName.Name) {
+						newChain.ChainPolicy.CustomTrustStore.Add(cert); //root
+					} else {
+						newChain.ChainPolicy.ExtraStore.Add(cert); //intermediate
+					}
+				}
 			}
 
 			newChain.Build(new X509Certificate2(certificate));
