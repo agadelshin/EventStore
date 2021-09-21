@@ -1428,7 +1428,8 @@ namespace EventStore.Core {
 			var newChain = new X509Chain {
 				ChainPolicy = {
 					RevocationMode = X509RevocationMode.NoCheck,
-					TrustMode = X509ChainTrustMode.CustomRootTrust
+					TrustMode = X509ChainTrustMode.CustomRootTrust,
+					DisableCertificateDownloads = true
 				}
 			};
 
