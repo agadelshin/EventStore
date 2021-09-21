@@ -1427,14 +1427,15 @@ namespace EventStore.Core {
 
 			var newChain = new X509Chain {
 				ChainPolicy = {
-					RevocationMode = X509RevocationMode.NoCheck
+					RevocationMode = X509RevocationMode.NoCheck,
+					TrustMode = X509ChainTrustMode.CustomRootTrust
 				}
 			};
 
 			var trustedRootCerts = trustedRootCertsSelector();
 			if (trustedRootCerts != null) {
 				foreach (var cert in trustedRootCerts)
-					newChain.ChainPolicy.ExtraStore.Add(cert);
+					newChain.ChainPolicy.CustomTrustStore.Add(cert);
 			}
 
 			newChain.Build(new X509Certificate2(certificate));
@@ -1443,8 +1444,6 @@ namespace EventStore.Core {
 				chainStatus |= status.Status;
 			}
 
-			chainStatus &= ~X509ChainStatusFlags.UntrustedRoot; //clear the UntrustedRoot flag which indicates that the certificate is present in the extra store
-
 			if (chainStatus == X509ChainStatusFlags.NoError)
 				sslPolicyErrors &= ~SslPolicyErrors.RemoteCertificateChainErrors; //clear the RemoteCertificateChainErrors flag
 			else
@@ -1452,26 +1451,6 @@ namespace EventStore.Core {
 
 			if (sslPolicyErrors != SslPolicyErrors.None) {
 				return (false, $"The certificate ({certificate.Subject}) provided by the {certificateOrigin} failed validation with the following error(s): {sslPolicyErrors.ToString()} ({chainStatus})");
-			}
-
-			//client certificates need to be strictly validated against the set of trusted root certificates
-			//but this is not required for server certificates since the client is already validating the CN/SAN against the IP address/hostname it's connecting to
-			if (certificateOrigin == "client") {
-				var chainRoot = newChain.ChainElements[^1].Certificate;
-				var chainRootIsTrusted = false;
-				if (trustedRootCerts != null) {
-					foreach (var rootCert in trustedRootCerts) {
-						if (chainRoot.RawData.SequenceEqual(rootCert.RawData)) {
-							chainRootIsTrusted = true;
-							break;
-						}
-					}
-				}
-
-				if (!chainRootIsTrusted) {
-					return (false,
-						$"The certificate provided by the {certificateOrigin} does not have a root certificate present in the list of trusted root certificates");
-				}
 			}
 
 			return (true, null);
