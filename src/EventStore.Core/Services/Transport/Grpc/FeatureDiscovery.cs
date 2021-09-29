@@ -1,18 +1,18 @@
 using System.Linq;
 using System.Threading.Tasks;
 using EventStore.Client;
-using EventStore.Client.FeatureDiscovery;
+using EventStore.Client.ClientCapabilities;
 using Grpc.AspNetCore.Server;
 using Grpc.Core;
 using Microsoft.AspNetCore.Routing;
 
 namespace EventStore.Core.Services.Transport.Grpc {
-	internal partial class FeatureDiscovery
-		: EventStore.Client.FeatureDiscovery.FeatureDiscovery.FeatureDiscoveryBase {
+	internal partial class ClientCapabilities
+		: EventStore.Client.ClientCapabilities.ClientCapabilities.ClientCapabilitiesBase {
 		public const int ApiVersion = 1;
 		private readonly EndpointDataSource _endpointDataSource;
 
-		public FeatureDiscovery(EndpointDataSource endpointDataSource) {
+		public ClientCapabilities(EndpointDataSource endpointDataSource) {
 			_endpointDataSource = endpointDataSource;
 		}
 
@@ -27,7 +27,7 @@ namespace EventStore.Core.Services.Transport.Grpc {
 				});
 
 			var result = new SupportedMethods {
-				ApiVersion = ApiVersion.ToString(),
+				EventStoreServerVersion = EventStore.Common.Utils.VersionInfo.Version
 			};
 			result.Methods.AddRange(supportedEndpoints.Distinct());
 			return Task.FromResult(result);
