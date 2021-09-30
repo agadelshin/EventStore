@@ -27,8 +27,8 @@ namespace EventStore.Core.Tests.Services.Transport.Grpc.ClientCapabilitiesTests 
 				_expectedEndPoints.AddRange(GetEndPoints(Client.Operations.Operations.Descriptor));
 				_expectedEndPoints.AddRange(GetEndPoints(Client.Users.Users.Descriptor));
 				_expectedEndPoints.AddRange(GetEndPoints(Client.Gossip.Gossip.Descriptor));
-                _expectedEndPoints.AddRange(GetEndPoints(Client.Monitoring.Monitoring.Descriptor));
-                _expectedEndPoints.AddRange(GetEndPoints(ClientCapabilities.Descriptor));
+				_expectedEndPoints.AddRange(GetEndPoints(Client.Monitoring.Monitoring.Descriptor));
+				_expectedEndPoints.AddRange(GetEndPoints(ClientCapabilities.Descriptor));
 
 				var node = GetLeader();
 				await Task.WhenAll(node.AdminUserCreated, node.Started);
